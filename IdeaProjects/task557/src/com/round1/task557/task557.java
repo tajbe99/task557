@@ -1,108 +1,105 @@
 package com.round1.task557;
 
 import java.io.*;
-import java.net.Inet4Address;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class task557 {
-    public static void main(String[] args) throws IOException {
-        String line;
-        BufferedReader readBuff = null;
-        try {
-            readBuff = new BufferedReader(new FileReader("src\\com\\round1\\task557\\input.txt"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    public class task557 {
+        private static boolean flag_Of_Right_Matrix = false;
+        private static String INPUT_FILE="src\\com\\round1\\task557\\input.txt";
+        private static String OUTPUT_FILE="src\\com\\round1\\task557\\output.txt";
+        private static int lengthOfMatrixs;
+        private static int countOfMatrix;
+        private static String indexOfFinalElement;
+        private static int maxDigitsForMatrix;
+        private static ArrayList<int[][]> arrayOfMatrixs;
+
+        public static void main(String[] args) throws IOException {
+            readDataFromFile();
+                int[][] finalMatrix = MultiplyMatirx(arrayOfMatrixs, lengthOfMatrixs, countOfMatrix, maxDigitsForMatrix);
+                if (    lengthOfMatrixs <= 130 && lengthOfMatrixs >= 1
+                        && countOfMatrix <= 130 && countOfMatrix >= 1
+                        && maxDigitsForMatrix <= 1000 && (countOfMatrix == arrayOfMatrixs.size())) {
+                    flag_Of_Right_Matrix=true;
+                }
+                writeDataToFile(indexOfFinalElement, finalMatrix);
+                System.out.println(Arrays.deepToString
+                        (MultiplyMatirx(arrayOfMatrixs,lengthOfMatrixs,countOfMatrix,maxDigitsForMatrix)));
         }
-        try {
-            assert readBuff != null;
-            String firstLine = readBuff.readLine();
-            Integer lengthOfMatrixs = Integer.parseInt(firstLine.split(" ")[1]);
-            Integer countOfMatrix = Integer.parseInt(firstLine.split(" ")[0]);
-            String indexOfFinalElement = readBuff.readLine();
-            Integer maxDigitsForMatrix = Integer.parseInt(readBuff.readLine());
-            readBuff.readLine();
-            ArrayList<Integer[][]> arrayOfMatrixs = MatrixReader(readBuff, lengthOfMatrixs, countOfMatrix);
-            Integer[][] finalMatrix = ((lengthOfMatrixs <= 130 && lengthOfMatrixs >= 1) == (countOfMatrix <= 130 && countOfMatrix >= 1)) ? MultiplyMatirx(arrayOfMatrixs, lengthOfMatrixs, countOfMatrix) : null;
-            finalMatrix = (finalMatrix != null && maxDigitsForMatrix < 1000) ? CheckConstraitsn(finalMatrix, maxDigitsForMatrix) : null;
-            try (BufferedWriter writeBuff = new BufferedWriter(new FileWriter("src\\com\\round1\\task557\\output.txt", false))) {
+
+        private static void readDataFromFile(){
+            String line;
+            BufferedReader readBuff;
+            try {
+                readBuff = new BufferedReader(new FileReader(INPUT_FILE));
+                String[] lenCountMatrix = readBuff.readLine().split(" ");
+                lengthOfMatrixs = Integer.parseInt(lenCountMatrix[1]);
+                countOfMatrix = Integer.parseInt(lenCountMatrix[0]);
+                indexOfFinalElement = readBuff.readLine();
+                maxDigitsForMatrix = Integer.parseInt(readBuff.readLine());
+                readBuff.readLine();
+                arrayOfMatrixs = MatrixReader(readBuff, lengthOfMatrixs, countOfMatrix);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException("Ошибка, файл не найден!");
+            } catch (IOException e) {
+                throw new RuntimeException("Ошибка");
+            }
+        }
+
+        private static void writeDataToFile(String indexOfFinalElement, int[][] finalMatrix) throws IOException {
+            try (BufferedWriter writeBuff = new BufferedWriter(new FileWriter(OUTPUT_FILE, false))) {
+                String[] indexesOfFinalMatrixElemet = indexOfFinalElement.split(" ");
                 if (finalMatrix != null) {
-                    writeBuff.write(finalMatrix[Integer.parseInt(indexOfFinalElement.split(" ")[0]) - 1][Integer.parseInt(indexOfFinalElement.split(" ")[1]) - 1].toString());
-                } else {
-                    writeBuff.write("Значения в входном фале не подходят по условию");
+                    int answerDigit =finalMatrix[Integer.parseInt(indexesOfFinalMatrixElemet[0]) - 1]
+                            [Integer.parseInt(indexesOfFinalMatrixElemet[1]) - 1];
+                    writeBuff.write(String.valueOf(answerDigit));
                 }
             }
-            System.out.println(Arrays.deepToString(MultiplyMatirx(arrayOfMatrixs,lengthOfMatrixs,countOfMatrix)));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-        finally {
-            assert readBuff != null;
-            readBuff.close();
-        }
-    }
 
-    private static ArrayList<Integer[][]> MatrixReader(BufferedReader readBuff, Integer lengthOfMatrixs, Integer countOfMatrix) throws IOException {
-        ArrayList<Integer[][]> finalArrayList = new ArrayList<>(lengthOfMatrixs);
-        Integer colOfbuffMatris;
-        Integer[][] bufferMatrix;
-        String line;
-        for (int i =0;i<=countOfMatrix;i++) {
-            bufferMatrix = new Integer[lengthOfMatrixs][lengthOfMatrixs];
-            colOfbuffMatris = 0;
-        while ((line=readBuff.readLine())!=null) {
-            if (line.length() != 0) {
-                    for (int j =0;j<lengthOfMatrixs;j++) {
-                        bufferMatrix[colOfbuffMatris][j] = Integer.parseInt(line.split(" ")[j]);
-                    }
-                colOfbuffMatris++;
+        private static ArrayList<int[][]> MatrixReader(BufferedReader readBuff, int lengthOfMatrixs, int countOfMatrix)
+                throws IOException {
+            ArrayList<int[][]> finalArrayList = new ArrayList<>(lengthOfMatrixs);
+            int colOfbuffMatris;
+            int[][] bufferMatrix =  new int[lengthOfMatrixs][lengthOfMatrixs];
+            String line;
+            for (int i =0;i<=countOfMatrix;i++) {
+                colOfbuffMatris = 0;
+                while ((line=readBuff.readLine())!=null) {
+                    if (line.length() == 0) break;
+                        for (int j =0;j<lengthOfMatrixs;j++) {
+                            bufferMatrix[colOfbuffMatris][j] = Integer.parseInt(line.split(" ")[j]);
+                        }
+                        colOfbuffMatris++;
+                }
+                finalArrayList.add(bufferMatrix);
+                bufferMatrix = new int[lengthOfMatrixs][lengthOfMatrixs];
             }
-            else{
-                break;
-            }
+            return finalArrayList;
         }
-            finalArrayList.add(bufferMatrix);
-        }
-        finalArrayList.remove(finalArrayList.size()-1);
-        return finalArrayList;
-    }
 
-    private static Integer[][] MultiplyMatirx(ArrayList<Integer[][]> arrayOfMatrix, Integer lengthOfMatrixs,Integer countOfMatrix){
-        Integer indexOfMatrix=0;
-        Integer sum;
-        Integer[][] finalMatrix = new Integer[lengthOfMatrixs][lengthOfMatrixs];
-        for (int i = 0; i < lengthOfMatrixs; i++) {
-            System.arraycopy(arrayOfMatrix.get(0)[i], 0, finalMatrix[i], 0, lengthOfMatrixs);
-        }
-        for (int arr=1;arr<countOfMatrix;arr++){
-            Integer[][] buffMatrix = new Integer[lengthOfMatrixs][lengthOfMatrixs];
+        private static int[][] MultiplyMatirx(ArrayList<int[][]> arrayOfMatrix,
+                                              int lengthOfMatrixs,int countOfMatrix,int maxDigit){
+            int indexOfMatrix=0;
+            int sum;
+            int[][] finalMatrix = new int[lengthOfMatrixs][lengthOfMatrixs];
             for (int i = 0; i < lengthOfMatrixs; i++) {
-                for (int j = 0; j <arrayOfMatrix.get(arr).length ; j++) {
-                    sum=0;
-                    for (int k = 0; k < lengthOfMatrixs; k++) {
-                        sum += finalMatrix[i][k] * arrayOfMatrix.get(arr)[k][j];
-                        buffMatrix[i][j] = sum;
+                System.arraycopy(arrayOfMatrix.get(0)[i], 0, finalMatrix[i], 0, lengthOfMatrixs);
+            }
+            for (int arr=1;arr<countOfMatrix;arr++){
+                int[][] buffMatrix = new int[lengthOfMatrixs][lengthOfMatrixs];
+                for (int i = 0; i < lengthOfMatrixs; i++) {
+                    for (int j = 0; j <arrayOfMatrix.get(arr).length ; j++) {
+                        sum=0;
+                        for (int k = 0; k < lengthOfMatrixs; k++) {
+                            sum += finalMatrix[i][k] * arrayOfMatrix.get(arr)[k][j];
+                            buffMatrix[i][j] = (sum >= maxDigit) ? sum % maxDigit : sum;
+                        }
                     }
                 }
+                finalMatrix=buffMatrix;
             }
-            finalMatrix=buffMatrix;
+            return finalMatrix;
         }
-        return finalMatrix;
-    }
-
-    private static Integer[][] CheckConstraitsn(Integer[][] finalMatrix,Integer maxDigits){
-        Integer[][] buffMatrix = new Integer[finalMatrix.length][finalMatrix.length];
-        for (int i = 0; i < finalMatrix.length; i++) {
-            System.arraycopy(finalMatrix[i], 0, buffMatrix[i], 0, finalMatrix.length);
-        }
-        for (int i=0;i<finalMatrix.length;i++){
-            for (int j=0;j<finalMatrix.length;j++){
-                if (finalMatrix[i][j]>=maxDigits){
-                    buffMatrix[i][j]%=maxDigits;
-                }
-            }
-        }
-        return buffMatrix;
-    }
 
 }
