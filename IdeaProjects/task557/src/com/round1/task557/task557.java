@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
     public class task557 {
-        private static boolean flag_Of_Right_Matrix = false;
         private static String INPUT_FILE="src\\com\\round1\\task557\\input.txt";
         private static String OUTPUT_FILE="src\\com\\round1\\task557\\output.txt";
         private static int lengthOfMatrixs;
@@ -16,19 +15,13 @@ import java.util.Arrays;
 
         public static void main(String[] args) throws IOException {
             readDataFromFile();
-                int[][] finalMatrix = MultiplyMatirx(arrayOfMatrixs, lengthOfMatrixs, countOfMatrix, maxDigitsForMatrix);
-                if (    lengthOfMatrixs <= 130 && lengthOfMatrixs >= 1
-                        && countOfMatrix <= 130 && countOfMatrix >= 1
-                        && maxDigitsForMatrix <= 1000 && (countOfMatrix == arrayOfMatrixs.size())) {
-                    flag_Of_Right_Matrix=true;
-                }
-                writeDataToFile(indexOfFinalElement, finalMatrix);
-                System.out.println(Arrays.deepToString
+            int[][] finalMatrix = MultiplyMatirx(arrayOfMatrixs, lengthOfMatrixs, countOfMatrix, maxDigitsForMatrix);
+            writeDataToFile(indexOfFinalElement, finalMatrix);
+            System.out.println(Arrays.deepToString
                         (MultiplyMatirx(arrayOfMatrixs,lengthOfMatrixs,countOfMatrix,maxDigitsForMatrix)));
         }
 
         private static void readDataFromFile(){
-            String line;
             BufferedReader readBuff;
             try {
                 readBuff = new BufferedReader(new FileReader(INPUT_FILE));
@@ -80,7 +73,6 @@ import java.util.Arrays;
 
         private static int[][] MultiplyMatirx(ArrayList<int[][]> arrayOfMatrix,
                                               int lengthOfMatrixs,int countOfMatrix,int maxDigit){
-            int indexOfMatrix=0;
             int sum;
             int[][] finalMatrix = new int[lengthOfMatrixs][lengthOfMatrixs];
             for (int i = 0; i < lengthOfMatrixs; i++) {
