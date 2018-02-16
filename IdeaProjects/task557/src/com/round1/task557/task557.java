@@ -15,10 +15,10 @@ import java.util.Arrays;
         private static int maxDigitsForMatrix;
 
         public static void main(String[] args) throws IOException {
-            writeDataToFile(multiplyMatirx(readDataFromFile()));
+            writeDataToFile(readDataFromFile());
         }
 
-        private static ArrayDeque<int[][]> readDataFromFile(){
+        private static int readDataFromFile(){
             BufferedReader readBuff;
             try {
                 readBuff = new BufferedReader(new FileReader(INPUT_FILE));
@@ -44,13 +44,13 @@ import java.util.Arrays;
                 }
             }
 
-        private static ArrayDeque<int[][]> matrixReader(BufferedReader readBuff)
+        private static int matrixReader(BufferedReader readBuff)
                 throws IOException {
-            ArrayDeque<int[][]> finalArrayList = new ArrayDeque<>(lengthOfMatrixs);
-            for (int i = 0 ; i <= countOfMatrix; i++) {
-                finalArrayList.add(matrixLineReader(readBuff));
+            int[][] finalMatrix = matrixLineReader(readBuff);
+            for (int i = 1 ; i < countOfMatrix; i++) {
+                finalMatrix = multyplyMatrixAlgorithm(finalMatrix,matrixLineReader(readBuff));
             }
-            return finalArrayList;
+            return finalMatrix[rowIndex][colIndex];
         }
 
         private static int[][] matrixLineReader(BufferedReader readBuff) throws IOException {
@@ -60,29 +60,23 @@ import java.util.Arrays;
             while ((line = readBuff.readLine())!=null) {
                 if (line.isEmpty()) break;
                     for (int j = 0 ; j < lengthOfMatrixs;j++) {
-                        bufferMatrix[colOfbuffMatris][j] = Integer.parseInt(line.split(" ")[j]);
+                            bufferMatrix[colOfbuffMatris][j] = Integer.parseInt(line.split(" ")[j]);
                     }
                     colOfbuffMatris++;
             }
             return bufferMatrix;
         }
 
-        private static int multiplyMatirx(ArrayDeque<int[][]> arrayOfMatrixs){
-            while (arrayOfMatrixs.size()>2){
-                arrayOfMatrixs.push(multyplyMatrixAlgorithm(arrayOfMatrixs.pop(),arrayOfMatrixs.pop()));
-            }
-            return arrayOfMatrixs.pop()[rowIndex][colIndex];
-        }
-
         private static int[][] multyplyMatrixAlgorithm(int[][] array1,int[][] array2) {
             int[][] buffMatrix = new int[lengthOfMatrixs][lengthOfMatrixs];
+            int sum;
             for (int i = 0; i < lengthOfMatrixs; i++) {
                 for (int j = 0; j <lengthOfMatrixs ; j++) {
-                    int sum=0;
-                    for (int k = 0; k < lengthOfMatrixs; k++) {
-                        sum += array1[i][k] * array2[k][j];
-                        buffMatrix[i][j] = (sum >= maxDigitsForMatrix) ? sum % maxDigitsForMatrix : sum;
-                    }
+                    sum=0;
+                        for (int k = 0; k < lengthOfMatrixs; k++) {
+                            sum += array1[i][k] * array2[k][j];
+                            buffMatrix[i][j] = (sum >= maxDigitsForMatrix) ? sum % maxDigitsForMatrix : sum;
+                        }
                 }
             }
             return buffMatrix;
