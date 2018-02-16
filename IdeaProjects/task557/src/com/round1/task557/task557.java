@@ -1,7 +1,8 @@
 package com.round1.task557;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.ArrayDeque;
 import java.util.Arrays;
 
     public class task557 {
@@ -9,17 +10,15 @@ import java.util.Arrays;
         private static final String OUTPUT_FILE="src\\com\\round1\\task557\\output.txt";
         private static int lengthOfMatrixs;
         private static int countOfMatrix;
-        private static int ROW_INDEX;
-        private static int COL_INDEX;
+        private static int rowIndex;
+        private static int colIndex;
         private static int maxDigitsForMatrix;
-        private static int[][] array1;
-        private static int[][] array2;
 
         public static void main(String[] args) throws IOException {
             writeDataToFile(multiplyMatirx(readDataFromFile()));
         }
 
-        private static ArrayList<int[][]> readDataFromFile(){
+        private static ArrayDeque<int[][]> readDataFromFile(){
             BufferedReader readBuff;
             try {
                 readBuff = new BufferedReader(new FileReader(INPUT_FILE));
@@ -27,8 +26,8 @@ import java.util.Arrays;
                 lengthOfMatrixs = Integer.parseInt(lenCountMatrix[1]);
                 countOfMatrix = Integer.parseInt(lenCountMatrix[0]);
                 String[] indexOfFinalElement = readBuff.readLine().split(" ");
-                ROW_INDEX = Integer.parseInt(indexOfFinalElement[0]) - 1;
-                COL_INDEX = Integer.parseInt(indexOfFinalElement[1]) - 1;
+                rowIndex = Integer.parseInt(indexOfFinalElement[0]) - 1;
+                colIndex = Integer.parseInt(indexOfFinalElement[1]) - 1;
                 maxDigitsForMatrix = Integer.parseInt(readBuff.readLine());
                 readBuff.readLine();
                 return matrixReader(readBuff);
@@ -45,10 +44,9 @@ import java.util.Arrays;
                 }
             }
 
-        private static ArrayList<int[][]> matrixReader(BufferedReader readBuff)
+        private static ArrayDeque<int[][]> matrixReader(BufferedReader readBuff)
                 throws IOException {
-            ArrayList<int[][]> finalArrayList = new ArrayList<>(lengthOfMatrixs);
-            String line;
+            ArrayDeque<int[][]> finalArrayList = new ArrayDeque<>(lengthOfMatrixs);
             for (int i = 0 ; i <= countOfMatrix; i++) {
                 finalArrayList.add(matrixLineReader(readBuff));
             }
@@ -69,20 +67,18 @@ import java.util.Arrays;
             return bufferMatrix;
         }
 
-        private static int multiplyMatirx(ArrayList<int[][]> arrayOfMatrixs){
-            int finalyMatrix[][] =  arrayOfMatrixs.get(0);
-            for (int arr = 1; arr < countOfMatrix; arr++){
-                finalyMatrix = multyplyMatrixAlgorithm(finalyMatrix,arrayOfMatrixs.get(arr));
+        private static int multiplyMatirx(ArrayDeque<int[][]> arrayOfMatrixs){
+            while (arrayOfMatrixs.size()>2){
+                arrayOfMatrixs.push(multyplyMatrixAlgorithm(arrayOfMatrixs.pop(),arrayOfMatrixs.pop()));
             }
-            return finalyMatrix[ROW_INDEX][COL_INDEX];
+            return arrayOfMatrixs.pop()[rowIndex][colIndex];
         }
 
         private static int[][] multyplyMatrixAlgorithm(int[][] array1,int[][] array2) {
-            int sum;
             int[][] buffMatrix = new int[lengthOfMatrixs][lengthOfMatrixs];
             for (int i = 0; i < lengthOfMatrixs; i++) {
                 for (int j = 0; j <lengthOfMatrixs ; j++) {
-                    sum=0;
+                    int sum=0;
                     for (int k = 0; k < lengthOfMatrixs; k++) {
                         sum += array1[i][k] * array2[k][j];
                         buffMatrix[i][j] = (sum >= maxDigitsForMatrix) ? sum % maxDigitsForMatrix : sum;
